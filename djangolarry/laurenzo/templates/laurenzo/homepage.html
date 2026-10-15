@@ -1,0 +1,74 @@
+{% extends "laurenzo/base.html" %}
+{% block content %}
+<!-- Main Container -->
+<div class="container">
+    <div class="content-grid">
+        <!-- Posts Feed with all required properties -->
+        <main class="posts-feed">
+            {% for blog in blogs %}
+            <!-- Blog Article 1 -->
+            <article class="post-card">
+                <!-- 1. Headline -->
+                <h2>{{ blog.headline }}</h2>
+
+                <!-- 2 & 3. Author & Published At -->
+                <div class="post-meta">
+                    <span class="author">{{ blog.author }}</span>
+                    <span class="dot">•</span>
+                    <time datetime="2026-09-08">{{ blog.published_at }}</time>
+                </div>
+
+                <!-- 4. Body Excerpt -->
+                <div class="post-body">
+                    <p>{{ blog.body|truncatechars:30 }}</p>
+                </div>
+                <div class="post-footer" style="display:flex; gap:1em">
+
+                    <!-- Read More Link -->
+                    <div class="post-footer">
+                        {% comment %} <a href="blog/{{blog.pk}}" class="read-more"> {% endcomment %}
+                            <a href="{% url 'read-blog' blog.pk %}" class="Read More">
+                                Read Essay <span class="arrow">→</span>
+                            </a>
+                    </div>
+
+                    {% comment %} {%if user.is_authenticated and blog.author == user%} 
+                    <div class="post-delete">
+
+                        <form method="post" action="{% url 'article_delete' blog.pk %}">
+                            {% csrf_token %}
+                            <button class="read-more delete-btn" style="padding-block:1rem" type="submit"
+                                onclick="return confirm('Are you sure you want to delete this article?');">
+                                Delete
+                            </button>
+                        </form>
+                    </div> 
+                    {% endif %} {% endcomment %}
+                </div>
+
+            </article>
+            {% endfor %}
+
+        </main>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="widget about-widget">
+                <h3 class="widget-title">About</h3>
+                <p>Lumen is a curated journal exploring intentional design, deep thinking, and modern editorial
+                    aesthetics.</p>
+            </div>
+
+            <div class="widget newsletter-widget">
+                <h3 class="widget-title">Dispatch</h3>
+                <p>Subtle thoughts delivered straight to your inbox every fortnight.</p>
+                <form class="newsletter-form" onsubmit="event.preventDefault();">
+                    <input type="email" placeholder="Your email address" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </aside>
+
+    </div>
+</div>
+{% endblock %}

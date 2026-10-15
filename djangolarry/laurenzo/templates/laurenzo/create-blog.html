@@ -1,0 +1,315 @@
+{% extends "laurenzo/base.html" %}
+{% block content %}
+    <style>
+        /* --- Color Palette & Variables --- */
+        :root {
+            --bg-color: #0d0d0f;              /* Deep obsidian dark background */
+            --card-bg: rgba(255, 255, 255, 0.03); /* Translucent glass card background */
+            --card-hover-bg: rgba(255, 255, 255, 0.05);
+            --text-primary: #e8e6e1;          /* Soft champagne text */
+            --text-muted: #949086;            /* Warm muted grey */
+            --accent: #d4a373;                /* Champagne / Muted gold */
+            --accent-glow: rgba(212, 163, 115, 0.15);
+            --border-color: rgba(255, 255, 255, 0.07);
+            --border-hover: rgba(212, 163, 115, 0.35);
+            
+            --font-display: 'Italiana', serif;
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 80% 15%, rgba(212, 163, 115, 0.06) 0%, transparent 45%),
+                radial-gradient(circle at 15% 85%, rgba(138, 100, 70, 0.05) 0%, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* --- Header --- */
+        .header {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4rem 2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .brand {
+            font-family: var(--font-display);
+            font-size: 2.2rem;
+            letter-spacing: 1px;
+            color: var(--text-primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        /* --- Form Container --- */
+        .create-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 3rem 2rem 6rem;
+        }
+
+        .page-title {
+            font-family: var(--font-display);
+            font-size: 2.8rem;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .page-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            font-weight: 300;
+        }
+
+        /* --- Glass Editor Card --- */
+        .editor-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 3rem;
+            border-radius: 20px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .editor-form {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        label {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* Inputs & Textarea Styling */
+        input[type="text"],
+        input[type="date"],
+        textarea {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        textarea:focus {
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        /* Unique styling for headline input */
+        input.title-input {
+            font-family: var(--font-display);
+            font-size: 1.6rem;
+            letter-spacing: 0.5px;
+        }
+
+        textarea {
+            min-height: 250px;
+            resize: vertical;
+            line-height: 1.8;
+            font-weight: 300;
+        }
+
+        /* Custom calendar icon color for dark mode */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(0.8);
+            cursor: pointer;
+        }
+
+        /* Action Buttons */
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn-cancel {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .btn-cancel:hover {
+            color: var(--text-primary);
+        }
+
+        .btn-publish {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.9rem 2rem;
+            background: var(--accent);
+            color: #0d0d0f;
+            border: none;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .btn-publish:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px var(--accent-glow);
+        }
+
+        .btn-publish .arrow {
+            font-size: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-publish:hover .arrow {
+            transform: translateX(4px);
+        }
+
+        /* --- Footer --- */
+        .footer {
+            text-align: center;
+            padding: 4rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            font-weight: 300;
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .editor-card {
+                padding: 2rem;
+            }
+
+            .page-title {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+
+    <!-- Create Blog Form Area -->
+    <main class="create-container">
+         {{form.errors}}    
+        <h1 class="page-title">New Journal Entry</h1>
+        <p class="page-subtitle">Share your thoughts with clarity and intention.</p>
+
+        <!-- Editor Glass Card -->
+        <div class="editor-card">
+            <form class="editor-form" method="post">
+                 {% csrf_token %}
+
+                <!-- 1. Headline -->
+                <div class="form-group">
+                    <label for="headline">Headline</label>
+                    <input 
+                        type="text" 
+                        name="headline"
+                        id="headline" 
+                        class="title-input" 
+                        placeholder="Enter article title..." 
+                        required
+                    >
+                </div>
+
+
+                <!-- 4. Body -->
+                <div class="form-group">
+                    <label for="body">Body</label>
+                    <textarea 
+                        id="body" 
+                        name="body"
+                        placeholder="Write your essay thoughts here..." 
+                        required
+                    ></textarea>
+                </div>
+
+                <!-- Form Action Buttons -->
+                <div class="form-actions">
+                    <a href="#" class="btn-cancel">Discard Draft</a>
+                    <button type="submit" class="btn-publish">
+                        Publish Entry <span class="arrow">→</span>
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+    </main>
+{%endblock%}
